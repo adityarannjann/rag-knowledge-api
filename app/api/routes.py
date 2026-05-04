@@ -4,6 +4,7 @@ import os
 
 from app.services.ingestion_service import IngestionService
 from app.services.query_service import QueryService
+from app.models.chat_models import ChatRequest, ChatResponse
 
 router = APIRouter()
 ingestion_service = IngestionService()
@@ -32,3 +33,11 @@ async def upload_file(file: UploadFile = File(...)):
 @router.post("/query")
 def query_rag(question: str):
     return query_service.query(question)
+
+@router.post("/chat", response_model=ChatResponse)
+def chat_rag(request: ChatRequest):
+    result = query_service.query(
+        question=request.question,
+        history=request.history
+    )
+    return result
